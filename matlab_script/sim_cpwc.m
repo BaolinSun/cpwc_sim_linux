@@ -13,7 +13,7 @@ function res = sim_cpwc(start_angle, end_angle, phantom_path, save_dir)
     % Next, we initialize the field II toolbox. Again, this only works if the 
     % Field II simulation program (<field-ii.dk>) is in MATLAB's path. We also
     % pass our set constants to it.
-    path(path, 'C:\Users\Administrator\Documents\MATLAB\CPWC\matlab_script\Field_II_ver_3_30_windows');
+    path(path, '/home/hrzy/Desktop/CPWC/matlab_script/Field_II_ver_3_30_linux');
 
 %    path(path, '/home/hrzy/Desktop/matlab/Field_II_ver_3_30_linux')
     field_init(-1);

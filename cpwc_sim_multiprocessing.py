@@ -12,10 +12,10 @@ from utils.phantom import PhantomGenerator
 from utils.logger import create_logger
 
 mateng = matlab.engine.start_matlab('-nodesktop -nodisplay')
-mateng.cd(r"C:\Users\Administrator\Documents\MATLAB\CPWC\matlab_script")
-# mateng.addpath(r'C:\Users\hrzy\Documents\MATLAB\CPWC\matlab_script\picmus')
-# mateng.addpath(r'C:\Users\hrzy\Documents\MATLAB\CPWC\matlab_script\Field_II_ver_3_30_linux')
-# mateng.addpath(r'C:\Users\hrzy\Documents\MATLAB\CPWC\matlab_script\ustb')
+mateng.cd("/home/hrzy/Desktop/CPWC/matlab_script")
+mateng.addpath('/home/hrzy/Desktop/CPWC/matlab_script/picmus')
+mateng.addpath('/home/hrzy/Desktop/CPWC/matlab_script/Field_II_ver_3_30_linux')
+mateng.addpath('/home/hrzy/Desktop/CPWC/matlab_script/ustb')
 
 logger = create_logger('dataset/train/info.log')
 
@@ -56,7 +56,7 @@ def mat_sim(processid, phantomMatDir, rawDataDir, phantomID, start, end):
     time.sleep(10)
 
     mateng.sim_cpwc(start_angle, end_angle, phantom_matrix_path, save_dir)
-    logger.info(f'Calculate angle from {start_angle} to {start_angle} finished...')
+    logger.info(f'Calculate angle from {start} to {end} finished...')
 
 
 def fork_process(phantomMatDir, rawDataDir, phantomID):
@@ -137,7 +137,7 @@ def findMaxID(fileName):
 if __name__ == '__main__':
     # name = 'CPWC20230525'
 
-    fileName = r'C:\Users\Administrator\Documents\MATLAB\CPWC\dataset\train'
+    fileName = '/home/hrzy/Desktop/CPWC/dataset/train'
     N = 1e5
 
     phantomImgDir, phantomMatDir, rawDataDir, usImageDir = config(fileName)
@@ -152,11 +152,14 @@ if __name__ == '__main__':
     multiprocessing.set_start_method('spawn')
     logger.info(f'master process ({os.getpid()}) start...')
 
-    PHANTOM_NUM = 0
-    epoch = 0
+    PHANTOM_NUM = 1000
     try:
 
         while True:
+            logger.info('================')
+            logger.info(f'Current phantom ID: {phantomID}')
+            logger.info('================')
+
             logger.info('==>generate phantom original image...')
             generate_phantom_img(phantomImgDir, phantomID)
 
@@ -169,21 +172,18 @@ if __name__ == '__main__':
             logger.info('==>reconstruct ultrasound simulated imgae...')
             mat_reconstruct_img(rawDataDir, usImageDir, phantomID)
 
-            logger.info('===========')
-            logger.info(f'Current phantom ID: {phantomID}')
-            logger.info('===========')
 
-            epoch += 1
-            if epoch > PHANTOM_NUM:
+            if phantomID > PHANTOM_NUM:
                 break
 
-            logger.info('master process sleep for 900 seconds...')
+            time.sleep(600)
+            logger.info('master process sleep for 600 seconds...')
             phantomID += 1
 
 
     except KeyboardInterrupt:
         logger.info('KeyboardInterrupt....')
-
+        mateng.quit()
     finally:
         mateng.quit()
 
