@@ -93,7 +93,7 @@ classdef beamformed_data < uff
                 h.figure_handle = figure_handle_in;
                 axis_handle = figure_handle_in;
             else
-                h.figure_handle=figure();
+                h.figure_handle=figure('visible','off');
                 axis_handle = gca(h.figure_handle);
             end
             
